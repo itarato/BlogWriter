@@ -84,7 +84,7 @@ var BlogWriter = function(options) {
           if (starters.indexOf(mainPrefix) >= 0) {
             if (mainPrefix == 'CODE') {
               state = state | ST_CODE;
-              line = '<pre class="brush">' + line;
+              line = '<pre class="brush:js">' + line;
             }
           }
 
