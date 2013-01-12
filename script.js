@@ -38,14 +38,30 @@ var BlogWriter = function(options) {
   ];
 
   var getPrefix = function(line) {
-    if (!line.toString().match(/^\/{0,1}[A-Z]{1,}[A-Z0-9:]*\./gi)) {
-      return null;
-    }
+    if (!line) { return; }
 
     var prefix = line.toString().replace(/^(\/{0,1}[A-Z]{1,}[A-Z0-9:]*)\..*$/g, '$1');
     var prefix_parts = prefix.split(':');
+    var tag = prefix_parts.shift();
+    var strippedLine = line.toString().replace(/^\/{0,1}[A-Z]{1,}[A-Z0-9:]*\.(.*)$/g, '$1');
 
-    return prefix_parts;
+    return {
+      tag: tag,
+      params: prefix_parts,
+      line: strippedLine
+    };
+  };
+
+  var getSuffix = function(line) {
+    if (!line) { return; }
+
+    var suffix = line.toString().replace(/^.*\/([A-Z]{1,}[A-Z0-9]*)$/g, '$1');
+    var strippedLine = line.toString().replace(/^(.*)\/[A-Z]{1,}[A-Z0-9]*$/g, '$1');
+
+    return {
+      tag: suffix || null,
+      line: strippedLine
+    };
   };
 
   var removePrefix = function(line) {
@@ -55,6 +71,18 @@ var BlogWriter = function(options) {
   var wrap = function(line, prefix) {
     var tag = prefix.toString().toLowerCase();
     return '<' + tag + '>' + line + '</' + tag + '>';
+  };
+
+  var analyzeLine = new function(line, state) {
+    var prefix = getPrefix(line);
+    var suffix = getSuffix(line);
+
+    return {
+      prefix: null,
+      suffix: null,
+      line: line,
+      state: state
+    };
   };
 
   return {
