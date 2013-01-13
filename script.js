@@ -1,4 +1,9 @@
 jQuery(function(){
+  $('#tabs a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+
   var blogWriter = new BlogWriter({
     sourceElement: '#post',
     targetElement: '#result',
@@ -63,7 +68,7 @@ var BlogWriter = function(options) {
 
     if (line_info.prefix.isPrefix) {
       openTags.push(line_info.prefix.tag);
-      line_info.line = '<' + line_info.prefix.tag + ' ' + line_info.prefix.params + '>' + line_info.line;
+      line_info.line = '<' + line_info.prefix.tag + ' ' + (line_info.prefix.params || '') + '>' + line_info.line;
     }
 
     if (line_info.hasCloseTag) {

@@ -5,18 +5,14 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="script.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
-<script src="syntaxhighlighter/scripts/shCore.js"></script>
-<script src="syntaxhighlighter/scripts/shBrushJScript.js"></script>
 
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link rel="stylesheet" type="text/css" href="style.css" />
-<link href="syntaxhighlighter/styles/shCore.css" rel="stylesheet" type="text/css" />
-<link href="syntaxhighlighter/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
 
 </head>
 <body>
 
-<div class="container">
+<div class="container0">
 
   <h1>Blog Writer</h1>
 
@@ -24,7 +20,7 @@
 
   <div class="row-fluid">
 
-    <div class="span12">
+    <div class="span160">
       <div class="row-fluid">
 
         <div class="span6">
@@ -32,20 +28,27 @@
             <textarea id="post"></textarea>
           </div>
 
-          <hr />
-
-          <div class="row">
-            <strong>Source to copy:</strong>
-            <textarea id="code"></textarea>
-          </div>
         </div>
 
         <div class="span6">
-          <div class="result-wrapper">
-            <div id="result"></div>
-          </div>
-        </div>
 
+          <ul class="nav nav-tabs" id="tabs">
+            <li class="active"><a href="#result_pane">Preview</a></li>
+            <li><a href="#code_pane">Code</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="result-wrapper tab-pane active" id="result_pane">
+              <div id="result"></div>
+            </div>
+
+            <div id="code_pane" class="tab-pane">
+              <strong>Source to copy:</strong>
+              <textarea id="code"></textarea>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
 
