@@ -28,6 +28,11 @@
             <textarea id="post"></textarea>
           </div>
 
+          <div>
+            Words: <span id="stat_words" class="label label-success">?</span> |
+            Characters: <span id="stat_chars" class="label label-info">?</span>
+          </div>
+
         </div>
 
         <div class="span6">
@@ -35,6 +40,7 @@
           <ul class="nav nav-tabs" id="tabs">
             <li class="active"><a href="#result_pane">Preview</a></li>
             <li><a href="#code_pane">Code</a></li>
+            <li><a href="#help_pane">Help</a></li>
           </ul>
 
           <div class="tab-content">
@@ -45,6 +51,31 @@
             <div id="code_pane" class="tab-pane">
               <strong>Source to copy:</strong>
               <textarea id="code"></textarea>
+            </div>
+
+            <div id="help_pane" class="tab-pane">
+              <pre>
+Basic tags:           #TAG#
+Tags with attributes: #TAG::ATTRIBUTES#
+Close tag (has to be the last character): /
+
+Example:
+
+#h1#This is a title/
+
+#pre#function source() {
+  // this is a source code
+}/
+
+#pre::class="brush:js"#function source() {
+  // This is a source with attributes
+}/
+
+Shortcuts:
+#php# ... / -> #pre::class="brush:php"# ... / For PHP.
+#js# .... / -> #pre::class="brush:js"# .... / For JavaScript.
+#ps# .... / -> #pre::class="brush:ps"# .... / For PowerShell.
+              </pre>
             </div>
           </div>
 

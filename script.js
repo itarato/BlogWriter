@@ -40,6 +40,17 @@ var BlogWriter = function(options) {
     var params = prefix_parts.shift();
     var strippedLine = line.toString().replace(/^#[^#]+#(.*)$/g, '$1');
 
+    var shortcuts = {
+      'js':  {tag: 'pre', params: 'class="brush:js"'},
+      'php': {tag: 'pre', params: 'class="brush:php"'},
+      'ps': {tag: 'pre', params: 'class="brush:ps"'}
+    };
+
+    if (shortcuts.hasOwnProperty(tag)) {
+      params = shortcuts[tag].params;
+      tag = shortcuts[tag].tag;
+    }
+
     return {
       isPrefix: true,
       tag: tag,
@@ -122,11 +133,19 @@ var BlogWriter = function(options) {
           line = line + '<br />';
         }
 
+        line = line.replace(/(http:\/\/[^\s]+)\[([^\]]+)\]/gi, '<a target="_blank" href="$1">$2</a>');
+
         processedValue = processedValue + line + "\n";
       }
 
+      // Do stats.
+      jQuery('#stat_words').text(rawValue.toString().match(/\S+/g).length);
+      jQuery('#stat_chars').text(rawValue.toString().length);
+
       jQuery(options.targetElement).html(processedValue);
       jQuery(options.codeElement).val(processedValue);
+
+      jQuery(options.sourceElement).css('height', jQuery(options.targetElement).css('height'));
     }
   };
 }
