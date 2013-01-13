@@ -22,66 +22,74 @@ jQuery(function(){
  *  - targetElement
  */
 var BlogWriter = function(options) {
-  var ST_NORMAL = 1 << 0;
-  var ST_CODE   = 1 << 1;
-
-  var wrappables = [
-    'H1', 'H2', 'H3', 'H4', 'H5', 'H6'
-  ];
-
-  var starters = [
-    'CODE'
-  ];
-
-  var closers = [
-    '/CODE'
-  ];
-
   var getPrefix = function(line) {
-    if (!line) { return; }
+    if (!line || !line.toString().match(/^#[^#]+#/g)) {
+      return {
+        isPrefix: false,
+      };
+    }
 
-    var prefix = line.toString().replace(/^(\/{0,1}[A-Z]{1,}[A-Z0-9:]*)\..*$/g, '$1');
-    var prefix_parts = prefix.split(':');
+    var prefix = line.toString().replace(/^#([^#]+)#.*$/g, '$1');
+    var prefix_parts = prefix.split('::');
     var tag = prefix_parts.shift();
-    var strippedLine = line.toString().replace(/^\/{0,1}[A-Z]{1,}[A-Z0-9:]*\.(.*)$/g, '$1');
+    var params = prefix_parts.shift();
+    var strippedLine = line.toString().replace(/^#[^#]+#(.*)$/g, '$1');
 
     return {
+      isPrefix: true,
       tag: tag,
-      params: prefix_parts,
+      params: params,
       line: strippedLine
     };
   };
 
-  var getSuffix = function(line) {
-    if (!line) { return; }
-
-    var suffix = line.toString().replace(/^.*\/([A-Z]{1,}[A-Z0-9]*)$/g, '$1');
-    var strippedLine = line.toString().replace(/^(.*)\/[A-Z]{1,}[A-Z0-9]*$/g, '$1');
+  var hasCloseTag = function(line) {
+    if (!line) {
+      return {
+        isClosed: false
+      };
+    }
 
     return {
-      tag: suffix || null,
-      line: strippedLine
+      isClosed: line.toString().match(/\/$/g) != null,
+      line: line.toString().replace(/^(.*)\/$/g, '$1')
     };
   };
 
-  var removePrefix = function(line) {
-    return line.toString().replace(/^\/{0,1}[A-Z]{1,}[A-Z0-9:]*\.(.*)$/g, '$1');
+  var addTags = function(line_info, openTags) {
+    if (!line_info.line) {
+      return line_info.line;
+    }
+
+    if (line_info.prefix.isPrefix) {
+      openTags.push(line_info.prefix.tag);
+      line_info.line = '<' + line_info.prefix.tag + ' ' + line_info.prefix.params + '>' + line_info.line;
+    }
+
+    if (line_info.hasCloseTag) {
+      line_info.line = line_info.line + '</' + openTags.pop() + '>';
+    }
+
+    return line_info.line;
   };
 
-  var wrap = function(line, prefix) {
-    var tag = prefix.toString().toLowerCase();
-    return '<' + tag + '>' + line + '</' + tag + '>';
-  };
-
-  var analyzeLine = new function(line, state) {
+  var analyzeLine = function(line) {
     var prefix = getPrefix(line);
-    var suffix = getSuffix(line);
+    if (prefix.isPrefix) {
+      // Removed prefix.
+      line = prefix.line;
+    }
+
+    var closeTag = hasCloseTag(line);
+    if (closeTag.isClosed) {
+      // Remove close tag.
+      line = closeTag.line;
+    }
 
     return {
-      prefix: null,
-      suffix: null,
-      line: line,
-      state: state
+      prefix: prefix,
+      hasCloseTag: closeTag.isClosed,
+      line: line
     };
   };
 
@@ -91,40 +99,21 @@ var BlogWriter = function(options) {
 
       var rawValue = jQuery(options.sourceElement).val();
       var processedValue = '';
-      var state = ST_NORMAL;
+      var openTags = [];
 
       var lines = rawValue.toString().split("\n");
       for (var lineIdx in lines) {
         var line = lines[lineIdx].toString();
 
+        // Convert gt and lt signs.
         line = line.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
         // Process prefix directives.
-        var prefix = getPrefix(line);
-        var mainPrefix = prefix ? prefix[0] : null;
-        line = removePrefix(line);
+        var line_info = analyzeLine(line);
 
-        if (mainPrefix) {
-          if (wrappables.indexOf(mainPrefix) >= 0) {
-            line = wrap(line, prefix[0]);
-          }
+        line = addTags(line_info, openTags);
 
-          if (starters.indexOf(mainPrefix) >= 0) {
-            if (mainPrefix == 'CODE') {
-              state = state | ST_CODE;
-              line = '<pre class="brush:js">' + line;
-            }
-          }
-
-          if (closers.indexOf(mainPrefix) >= 0) {
-            if (mainPrefix == '/CODE') {
-              state = state ^ ST_CODE;
-              line = line + '</pre>';
-            }
-          }
-        }
-
-        if (!(state & ST_CODE)) {
+        if (openTags.indexOf('pre') == -1) {
           line = line + '<br />';
         }
 
@@ -133,7 +122,6 @@ var BlogWriter = function(options) {
 
       jQuery(options.targetElement).html(processedValue);
       jQuery(options.codeElement).val(processedValue);
-      SyntaxHighlighter.highlight();
     }
   };
 }
