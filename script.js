@@ -43,7 +43,8 @@ var BlogWriter = function(options) {
     var shortcuts = {
       'js':  {tag: 'pre', params: 'class="brush:js"'},
       'php': {tag: 'pre', params: 'class="brush:php"'},
-      'ps': {tag: 'pre', params: 'class="brush:ps"'}
+      'ps': {tag: 'pre', params: 'class="brush:ps"'},
+      'xml': {tag: 'pre', params: 'class="brush:xml"'}
     };
 
     if (shortcuts.hasOwnProperty(tag)) {
@@ -133,7 +134,7 @@ var BlogWriter = function(options) {
           line = line + '<br />';
         }
 
-        line = line.replace(/(http:\/\/[^\s]+)\[([^\]]+)\]/gi, '<a target="_blank" href="$1">$2</a>');
+        line = line.replace(/(https?:\/\/[^\s]+)\[([^\]]+)\]/gi, '<a target="_blank" href="$1">$2</a>');
 
         processedValue = processedValue + line + "\n";
       }
