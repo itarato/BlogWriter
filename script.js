@@ -44,7 +44,8 @@ var BlogWriter = function(options) {
       'js':  {tag: 'pre', params: 'class="brush:js"'},
       'php': {tag: 'pre', params: 'class="brush:php"'},
       'ps': {tag: 'pre', params: 'class="brush:ps"'},
-      'xml': {tag: 'pre', params: 'class="brush:xml"'}
+      'xml': {tag: 'pre', params: 'class="brush:xml"'},
+      'python': {tag: 'pre', params: 'class="brush:python"'}
     };
 
     if (shortcuts.hasOwnProperty(tag)) {
@@ -145,8 +146,6 @@ var BlogWriter = function(options) {
 
       jQuery(options.targetElement).html(processedValue);
       jQuery(options.codeElement).val(processedValue);
-
-      jQuery(options.sourceElement).css('height', jQuery(options.targetElement).css('height'));
     }
   };
 }

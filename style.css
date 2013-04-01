@@ -17,12 +17,15 @@ body {
 }
 
 #result {
-  margin: 3px;
-  background-color: #eee;
-  padding: 12px;
+  padding: 16px;
+  height: 518px;
 }
 
 pre {
   background-color: #333;
   color: #5f5;
+}
+
+.tab-content {
+  background-color: #eee;
 }
